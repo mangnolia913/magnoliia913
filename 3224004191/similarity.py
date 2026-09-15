@@ -7,6 +7,35 @@ import re
 _CLEAN_PATTERN = re.compile(r'[^\w]', re.UNICODE)
 
 
+def read_text(path: str, encoding: str = 'utf-8') -> str:
+    """读取文本文件。
+
+    Args:
+        path: 文件绝对路径
+        encoding: 文件编码，默认 utf-8
+
+    Returns:
+        文件内容字符串
+
+    Raises:
+        FileNotFoundError: 文件不存在
+        UnicodeDecodeError: 编码不匹配
+    """
+    with open(path, 'r', encoding=encoding) as f:
+        return f.read()
+
+
+def write_answer(path: str, score: float) -> None:
+    """将相似度写入答案文件，保留两位小数。
+
+    Args:
+        path: 答案文件绝对路径
+        score: 相似度，0.0 ~ 1.0
+    """
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write(f"{score:.2f}")
+
+
 def preprocess(text: str) -> str:
     """去除标点、空白，保留中文、字母、数字。
 
