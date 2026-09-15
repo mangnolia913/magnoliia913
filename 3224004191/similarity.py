@@ -49,7 +49,7 @@ def preprocess(text: str) -> str:
 
 
 def get_ngrams(text: str, n: int = 2) -> set:
-    """获取字符 n-gram 集合。
+    """获取字符 n-gram 集合（优化版：用 zip 滑窗）。
 
     Args:
         text: 已预处理的文本
@@ -60,7 +60,7 @@ def get_ngrams(text: str, n: int = 2) -> set:
     """
     if len(text) < n:
         return set()
-    return {text[i:i + n] for i in range(len(text) - n + 1)}
+    return {''.join(t) for t in zip(*(text[i:] for i in range(n)))}
 
 
 def similarity(text1: str, text2: str, n: int = 2) -> float:
