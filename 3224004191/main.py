@@ -21,14 +21,15 @@ def main() -> int:
         write_answer(ans_path, score)
         print(f"Similarity: {score:.2f}")
         return 0
-    except FileNotFoundError as e:
-        print(f"Error: file not found - {e}", file=sys.stderr)
+    except FileNotFoundError as exc:
+        print(f"Error: file not found - {exc}", file=sys.stderr)
         return 1
-    except UnicodeDecodeError as e:
-        print(f"Error: encoding failed - {e}", file=sys.stderr)
+    except UnicodeDecodeError as exc:
+        print(f"Error: encoding failed - {exc}", file=sys.stderr)
         return 1
-    except Exception as e:
-        print(f"Error: {e}", file=sys.stderr)
+    except Exception as exc:  # pylint: disable=broad-exception-caught
+        # 兜底捕获：保证任何异常都返回非 0 退出码，避免程序崩溃
+        print(f"Error: {exc}", file=sys.stderr)
         return 1
 
 

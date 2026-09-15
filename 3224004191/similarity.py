@@ -21,8 +21,8 @@ def read_text(path: str, encoding: str = 'utf-8') -> str:
         FileNotFoundError: 文件不存在
         UnicodeDecodeError: 编码不匹配
     """
-    with open(path, 'r', encoding=encoding) as f:
-        return f.read()
+    with open(path, 'r', encoding=encoding) as file_reader:
+        return file_reader.read()
 
 
 def write_answer(path: str, score: float) -> None:
@@ -32,8 +32,8 @@ def write_answer(path: str, score: float) -> None:
         path: 答案文件绝对路径
         score: 相似度，0.0 ~ 1.0
     """
-    with open(path, 'w', encoding='utf-8') as f:
-        f.write(f"{score:.2f}")
+    with open(path, 'w', encoding='utf-8') as file_writer:
+        file_writer.write(f"{score:.2f}")
 
 
 def preprocess(text: str) -> str:
@@ -48,42 +48,42 @@ def preprocess(text: str) -> str:
     return _CLEAN_PATTERN.sub('', text)
 
 
-def get_ngrams(text: str, n: int = 2) -> set:
+def get_ngrams(text: str, ngram_size: int = 2) -> set:
     """获取字符 n-gram 集合（优化版：用 zip 滑窗）。
 
     Args:
         text: 已预处理的文本
-        n: n-gram 的 n，默认 2
+        ngram_size: n-gram 的 n，默认 2
 
     Returns:
-        n-gram 字符串集合；若文本长度 < n，返回空集合
+        n-gram 字符串集合；若文本长度 < ngram_size，返回空集合
     """
-    if len(text) < n:
+    if len(text) < ngram_size:
         return set()
-    return {''.join(t) for t in zip(*(text[i:] for i in range(n)))}
+    return {''.join(t) for t in zip(*(text[i:] for i in range(ngram_size)))}
 
 
-def similarity(text1: str, text2: str, n: int = 2) -> float:
+def similarity(text1: str, text2: str, ngram_size: int = 2) -> float:
     """计算两段文本的 Jaccard 相似度。
 
     Args:
         text1: 原文
         text2: 抄袭版
-        n: n-gram 的 n，默认 2
+        ngram_size: n-gram 的 n，默认 2
 
     Returns:
         0.0 ~ 1.0 的浮点数
     """
-    s1 = get_ngrams(preprocess(text1), n)
-    s2 = get_ngrams(preprocess(text2), n)
+    ngrams1 = get_ngrams(preprocess(text1), ngram_size)
+    ngrams2 = get_ngrams(preprocess(text2), ngram_size)
 
     # 两篇都为空 → 视为完全一致
-    if not s1 and not s2:
+    if not ngrams1 and not ngrams2:
         return 1.0
     # 一篇为空 → 视为完全无关
-    if not s1 or not s2:
+    if not ngrams1 or not ngrams2:
         return 0.0
 
-    intersection = len(s1 & s2)
-    union = len(s1 | s2)
+    intersection = len(ngrams1 & ngrams2)
+    union = len(ngrams1 | ngrams2)
     return intersection / union

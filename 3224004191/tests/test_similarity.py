@@ -71,9 +71,9 @@ def test_both_empty():
 
 
 def test_text_shorter_than_n():
-    """文本长度小于 n，n-gram 集合为空"""
-    assert get_ngrams("啊", n=2) == set()
-    assert get_ngrams("", n=2) == set()
+    """文本长度小于 ngram_size，n-gram 集合为空"""
+    assert get_ngrams("啊", ngram_size=2) == set()
+    assert get_ngrams("", ngram_size=2) == set()
 
 
 def test_preprocess_removes_punctuation():
