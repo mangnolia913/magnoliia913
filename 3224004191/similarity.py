@@ -32,3 +32,29 @@ def get_ngrams(text: str, n: int = 2) -> set:
     if len(text) < n:
         return set()
     return {text[i:i + n] for i in range(len(text) - n + 1)}
+
+
+def similarity(text1: str, text2: str, n: int = 2) -> float:
+    """计算两段文本的 Jaccard 相似度。
+
+    Args:
+        text1: 原文
+        text2: 抄袭版
+        n: n-gram 的 n，默认 2
+
+    Returns:
+        0.0 ~ 1.0 的浮点数
+    """
+    s1 = get_ngrams(preprocess(text1), n)
+    s2 = get_ngrams(preprocess(text2), n)
+
+    # 两篇都为空 → 视为完全一致
+    if not s1 and not s2:
+        return 1.0
+    # 一篇为空 → 视为完全无关
+    if not s1 or not s2:
+        return 0.0
+
+    intersection = len(s1 & s2)
+    union = len(s1 | s2)
+    return intersection / union
